@@ -117,7 +117,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .live-grid {
   display: grid; grid-template-columns: 1fr 360px; gap: 20px;
-  align-items: start;
 }
 
 /* ============= VIDEO ============= */
@@ -198,13 +197,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .chat-panel {
   border-radius: 14px; overflow: hidden; background: var(--off-white);
   border: 1px solid var(--line); display: flex; flex-direction: column;
-  max-height: 600px;
 }
 .chat-header {
   padding: 14px 18px;
   border-bottom: 1px solid var(--line);
   display: flex; justify-content: space-between; align-items: center;
   background: var(--char); color: #fff;
+  flex-shrink: 0;
 }
 .chat-header-left { display: flex; align-items: center; gap: 10px; }
 .chat-header h3 {
@@ -222,7 +221,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 .chat-messages {
-  flex: 1; overflow-y: auto; padding: 8px 0; background: var(--off-white);
+  flex: 1; min-height: 0; overflow-y: auto; padding: 8px 0; background: var(--off-white);
   scroll-behavior: auto;
 }
 .chat-messages::-webkit-scrollbar { width: 4px; }
@@ -927,14 +926,18 @@ function syncChatHeight() {
   const video = document.querySelector('.video-wrap');
   const chat = document.querySelector('.chat-panel');
   if (video && chat && window.innerWidth > 980) {
-    chat.style.maxHeight = video.offsetHeight + 'px';
+    const h = video.offsetHeight;
+    if (h > 100) chat.style.height = h + 'px';
   } else if (chat) {
-    chat.style.maxHeight = '';
+    chat.style.height = '420px';
   }
 }
 window.addEventListener('resize', syncChatHeight);
-window.addEventListener('load', syncChatHeight);
-setTimeout(syncChatHeight, 100);
+// Run multiple times on load to catch layout settling
+window.addEventListener('load', () => { syncChatHeight(); setTimeout(syncChatHeight, 300); });
+syncChatHeight();
+setTimeout(syncChatHeight, 50);
+setTimeout(syncChatHeight, 200);
 
 // ========== INIT ==========
 document.getElementById('viewerCount').textContent = '0';
