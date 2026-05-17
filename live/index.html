@@ -246,6 +246,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .user-pinned {
   border-top: 1px solid var(--line); background: var(--lt-grey);
   max-height: 120px; overflow-y: auto; padding: 0;
+  flex-shrink: 0;
 }
 .user-pinned:empty { display: none; }
 .user-pinned .chat-msg {
@@ -283,6 +284,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .chat-input-area {
   padding: 12px 14px; border-top: 1px solid var(--line);
   display: flex; gap: 8px; align-items: center; background: var(--off-white);
+  flex-shrink: 0;
 }
 .chat-input-area input {
   flex: 1; background: var(--lt-grey); border: 1px solid var(--line);
