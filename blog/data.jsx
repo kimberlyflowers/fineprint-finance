@@ -28,8 +28,9 @@ const IMAGES = {
     taxStrategy:   '../assets/thumb-tax-strategy.png',
     irsRewards:    '../assets/thumb-irs-rewards.png',
     stopOverpay:   '../assets/thumb-stop-overpaying.png',
-    // add more thumbnails here
   },
+
+  eventHeader:   '../assets/event-header-default.png',
 };
 
 const PILLARS = [
@@ -375,7 +376,7 @@ const EVENTS = [
     venue: 'Zoom (link emailed after registration)',
     city: '',
     region: 'Online',
-    thumbnail: '',
+    thumbnail: IMAGES.eventHeader,
     thumbnailLabel: 'Event hero · tax-workshop',
     seatsTotal: 500,
     seatsLeft: 87,
@@ -420,7 +421,7 @@ const EVENTS = [
     venue: 'YouTube Live',
     city: '',
     region: 'Online',
-    thumbnail: '',
+    thumbnail: IMAGES.eventHeader,
     thumbnailLabel: 'Event hero · 401k-qa',
     seatsTotal: 0,
     seatsLeft: 0,
@@ -460,7 +461,7 @@ const EVENTS = [
     venue: 'Zoom (live) + Discord (between sessions)',
     city: '',
     region: 'Online',
-    thumbnail: '',
+    thumbnail: IMAGES.eventHeader,
     thumbnailLabel: 'Event hero · closing-cohort',
     seatsTotal: 30,
     seatsLeft: 9,
@@ -503,7 +504,7 @@ const EVENTS = [
     venue: 'Recording available to members',
     city: '',
     region: 'Online',
-    thumbnail: '',
+    thumbnail: IMAGES.eventHeader,
     thumbnailLabel: 'Event hero · hsa-past',
     seatsTotal: 0,
     seatsLeft: 0,
