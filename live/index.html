@@ -65,7 +65,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .nav-inner {
   display: flex; align-items: center; justify-content: space-between;
-  height: 72px; max-width: 1240px; margin: 0 auto; padding: 0 32px; gap: 24px;
+  height: 72px; max-width: 1440px; margin: 0 auto; padding: 0 32px; gap: 24px;
 }
 .nav-left { display: flex; align-items: center; gap: 16px; }
 .nav-right { display: flex; align-items: center; gap: 16px; }
@@ -112,11 +112,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ============= MAIN LAYOUT ============= */
 .live-content {
-  max-width: 1240px; margin: 0 auto; padding: 32px 32px 0;
+  max-width: 1440px; margin: 0 auto; padding: 24px 32px 0;
 }
 
 .live-grid {
-  display: grid; grid-template-columns: 1fr 380px; gap: 24px;
+  display: grid; grid-template-columns: 1fr 360px; gap: 20px;
 }
 
 /* ============= VIDEO ============= */
@@ -197,8 +197,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .chat-panel {
   border-radius: 14px; overflow: hidden; background: var(--off-white);
   border: 1px solid var(--line); display: flex; flex-direction: column;
-  height: calc((1240px - 380px - 24px - 64px) * 9 / 16 + 2px);
-  min-height: 480px; max-height: 640px;
+  min-height: 480px;
 }
 .chat-header {
   padding: 14px 18px;
@@ -230,17 +229,27 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .chat-messages::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 
 .chat-msg {
-  padding: 4px 18px; font-size: 13px; line-height: 1.4;
-  animation: msgSlide 0.15s ease-out; transition: background 0.2s;
+  padding: 6px 18px; font-size: 14px; line-height: 1.5;
+  animation: msgSlide 0.2s ease-out; transition: background 0.2s;
 }
 .chat-msg:hover { background: var(--lt-grey); }
 @keyframes msgSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .chat-msg .name {
-  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px;
   margin-right: 6px; cursor: pointer;
 }
 .chat-msg .text { color: var(--text-2); }
+
+/* User's own messages — pinned & highlighted */
+.chat-msg.user-msg {
+  background: var(--grad-soft);
+  border-left: 3px solid var(--green);
+  padding-left: 15px;
+  position: sticky; bottom: 0;
+  z-index: 2;
+}
+.chat-msg.user-msg .name { color: var(--green) !important; }
 .chat-msg .emoji { font-size: 15px; }
 
 .nc-1 { color: #c07830; } .nc-2 { color: #c04860; } .nc-3 { color: #4A6741; }
@@ -282,7 +291,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin-top: 24px; padding: 0 32px;
 }
 .sponsor-inner {
-  max-width: 1240px; margin: 0 auto;
+  max-width: 1440px; margin: 0 auto;
   border-radius: 14px; overflow: hidden;
   background: var(--char); border: 1px solid var(--line-dark);
   display: flex; align-items: center; justify-content: space-between;
@@ -321,7 +330,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ============= COMMUNITY INVITE ============= */
 .community-section {
-  max-width: 1240px; margin: 0 auto; padding: 48px 32px 64px;
+  max-width: 1440px; margin: 0 auto; padding: 48px 32px 64px;
 }
 .community-invite {
   display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
@@ -410,7 +419,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   padding: 32px 0;
 }
 .footer-inner {
-  max-width: 1240px; margin: 0 auto; padding: 0 32px;
+  max-width: 1440px; margin: 0 auto; padding: 0 32px;
   display: flex; justify-content: space-between; align-items: center; gap: 24px;
 }
 .footer-copy {
@@ -778,7 +787,13 @@ function addChatMessage(name, text, isSuper, amount) {
   msgCount++;
 
   while (container.children.length > 200) {
-    container.removeChild(container.firstChild);
+    const first = container.firstChild;
+    if (first && first.classList && first.classList.contains('user-msg')) {
+      if (container.children[1]) container.removeChild(container.children[1]);
+      else break;
+    } else {
+      container.removeChild(first);
+    }
   }
 
   container.scrollTop = container.scrollHeight;
@@ -796,8 +811,8 @@ function generateChatMessage() {
 }
 
 function startChat() {
-  const msgsPerSecond = 150;
-  const batchSize = 5;
+  const msgsPerSecond = 35;
+  const batchSize = 2;
   const interval = (1000 / msgsPerSecond) * batchSize;
 
   chatInterval = setInterval(() => {
@@ -854,7 +869,15 @@ function sendUserMsg() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if (!text) return;
-  addChatMessage('You', text, false);
+
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg user-msg';
+  div.innerHTML = `<span class="name">You</span><span class="text">${text}</span>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  msgCount++;
+
   input.value = '';
 }
 
