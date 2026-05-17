@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>LIVE — Fine Print Finance</title>
+<meta name="description" content="Fine Print Finance — Live event stream"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral: #F4A261;
+  --pink: #E76F8B;
+  --green: #4A6741;
+  --char: #1A1714;
+  --warm-dark: #2A2420;
+  --off-white: #F5F3F0;
+  --line: #E8E4E0;
+  --line-dark: #3A3330;
+  --text: #1A1714;
+  --text-2: #6B6560;
+  --text-3: #8A847E;
+  --grad: linear-gradient(135deg, #F4A261 0%, #E76F8B 100%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: #0f0d0b;
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Layout */
+.live-app {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  grid-template-rows: 64px 1fr;
+  height: 100vh;
+  gap: 0;
+}
+
+/* Nav */
+.live-nav {
+  grid-column: 1 / -1;
+  background: var(--char);
+  border-bottom: 1px solid var(--line-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 10;
+}
+.nav-left { display: flex; align-items: center; gap: 16px; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+
+/* Wordmark */
+.fp-wm { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 0.95; cursor: pointer; }
+.fp-wm .fp {
+  font-family: 'Playfair Display', Georgia, serif; font-weight: 900;
+  font-size: 12px; letter-spacing: -0.005em; line-height: 0.95;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(26,23,20,0.45) 2px, rgba(26,23,20,0.45) 3px),
+    linear-gradient(180deg, #8FAE7F, #6B8F5E);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.fp-wm .fn {
+  font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 20px;
+  letter-spacing: -0.01em; line-height: 0.95;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.live-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #e53e3e; color: #fff; padding: 5px 12px; border-radius: 6px;
+  font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  animation: livePulse 2s ease-in-out infinite;
+}
+.live-badge::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff;
+  animation: liveDot 1.5s ease-in-out infinite;
+}
+@keyframes livePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(229,62,62,0.5); } 50% { box-shadow: 0 0 12px 4px rgba(229,62,62,0.3); } }
+@keyframes liveDot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.viewer-count {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px; color: #cfc7bf;
+}
+.viewer-count svg { color: var(--coral); }
+.viewer-num {
+  font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 15px;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.event-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px;
+  color: #a89e95; letter-spacing: 0.02em;
+  max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.share-btn {
+  background: rgba(255,255,255,0.06); border: 1px solid var(--line-dark);
+  color: #cfc7bf; padding: 8px 14px; border-radius: 8px;
+  font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 12px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  transition: background 0.15s;
+}
+.share-btn:hover { background: rgba(255,255,255,0.1); }
+
+/* Main content — video area */
+.live-main {
+  background: #0a0908;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.video-container {
+  flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
+  background: #000;
+}
+.video-placeholder {
+  width: 100%; height: 100%;
+  background: url('../assets/event-header-default.png') center center / cover no-repeat;
+  position: relative;
+}
+.video-placeholder::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.4) 100%);
+}
+.video-overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+.play-button {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: var(--grad); box-shadow: 0 12px 40px rgba(231,111,139,0.4);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+}
+.play-button:hover { transform: scale(1.08); box-shadow: 0 16px 48px rgba(231,111,139,0.5); }
+.play-button svg { margin-left: 4px; }
+
+.video-bottom-bar {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  padding: 16px 20px;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.8));
+  display: flex; justify-content: space-between; align-items: flex-end;
+}
+.stream-info {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stream-title {
+  font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 18px;
+  color: #fff; letter-spacing: -0.01em;
+}
+.stream-subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: #a89e95;
+}
+.stream-elapsed {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #a89e95;
+  background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 6px;
+  backdrop-filter: blur(6px);
+}
+
+/* Chat panel */
+.live-chat {
+  background: var(--char);
+  border-left: 1px solid var(--line-dark);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.chat-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line-dark);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.chat-header-left {
+  display: flex; align-items: center; gap: 10px;
+}
+.chat-header h3 {
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px;
+  letter-spacing: 0.04em; color: #fff;
+}
+.chat-count {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--coral); background: rgba(244,162,97,0.12);
+  padding: 3px 8px; border-radius: 12px;
+}
+.chat-speed {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  color: #8a827a; letter-spacing: 0.06em;
+}
+
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 8px 0;
+  scroll-behavior: auto;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: #3a3330; border-radius: 4px; }
+
+.chat-msg {
+  padding: 4px 18px;
+  font-size: 13px; line-height: 1.4;
+  animation: msgSlide 0.15s ease-out;
+  transition: background 0.2s;
+}
+.chat-msg:hover { background: rgba(255,255,255,0.03); }
+@keyframes msgSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.chat-msg .name {
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px;
+  margin-right: 6px; cursor: pointer;
+}
+.chat-msg .text { color: #cfc7bf; }
+.chat-msg .emoji { font-size: 15px; }
+
+/* Name colors for variety */
+.nc-1 { color: #F4A261; } .nc-2 { color: #E76F8B; } .nc-3 { color: #6B8F5E; }
+.nc-4 { color: #7CB9E8; } .nc-5 { color: #C9A0DC; } .nc-6 { color: #F0C674; }
+.nc-7 { color: #E0907E; } .nc-8 { color: #87CEAB; } .nc-9 { color: #DDA0DD; }
+.nc-10 { color: #F5DEB3; }
+
+/* Superchat / highlighted */
+.chat-msg.super {
+  background: linear-gradient(90deg, rgba(244,162,97,0.12), rgba(231,111,139,0.08));
+  border-left: 3px solid var(--coral);
+  padding-left: 15px;
+  margin: 4px 0;
+}
+.chat-msg.super .amount {
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-right: 6px;
+}
+
+.chat-input-area {
+  padding: 12px 14px;
+  border-top: 1px solid var(--line-dark);
+  display: flex; gap: 8px; align-items: center;
+}
+.chat-input-area input {
+  flex: 1; background: #0f0d0b; border: 1px solid var(--line-dark);
+  color: #fff; padding: 10px 14px; border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; outline: none;
+  transition: border-color 0.15s;
+}
+.chat-input-area input:focus { border-color: var(--coral); }
+.chat-input-area button {
+  width: 38px; height: 38px; border-radius: 50%; background: var(--grad);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: none; transition: transform 0.15s;
+}
+.chat-input-area button:hover { transform: scale(1.06); }
+
+/* Reactions overlay */
+.reactions-bar {
+  position: absolute; bottom: 80px; right: 20px; z-index: 5;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.reaction-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(26,23,20,0.7); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; cursor: pointer; transition: transform 0.15s, background 0.15s;
+}
+.reaction-btn:hover { transform: scale(1.15); background: rgba(26,23,20,0.9); }
+
+.floating-emoji {
+  position: absolute; bottom: 100px; z-index: 4;
+  font-size: 28px; pointer-events: none;
+  animation: floatUp 3s ease-out forwards;
+}
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  70% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-300px) scale(0.5) rotate(15deg); }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .live-app { grid-template-columns: 1fr; grid-template-rows: 56px 50vh 1fr; }
+  .live-chat { border-left: none; border-top: 1px solid var(--line-dark); }
+  .event-title { display: none; }
+  .video-bottom-bar { padding: 12px 14px; }
+  .stream-title { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="live-app" id="app">
+  <!-- Nav -->
+  <nav class="live-nav">
+    <div class="nav-left">
+      <div class="fp-wm" onclick="window.location.href='../blog/'">
+        <span class="fp">Fine Print</span>
+        <span class="fn">Finance</span>
+      </div>
+      <span class="live-badge">Live</span>
+      <span class="event-title" id="eventTitle">The $1,847 Tax Workshop — Live with Josh</span>
+    </div>
+    <div class="nav-right">
+      <div class="viewer-count">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="viewer-num" id="viewerCount">0</span>
+        <span style="color:#8a827a">watching</span>
+      </div>
+      <button class="share-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Share
+      </button>
+    </div>
+  </nav>
+
+  <!-- Video -->
+  <div class="live-main">
+    <div class="video-container" id="videoContainer">
+      <div class="video-placeholder"></div>
+      <div class="video-overlay" id="videoOverlay">
+        <div class="play-button" onclick="startStream()">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+      <div class="video-bottom-bar">
+        <div class="stream-info">
+          <div class="stream-title">The $1,847 Tax Workshop</div>
+          <div class="stream-subtitle">Fine Print Finance &middot; Josh &middot; Live</div>
+        </div>
+        <div class="stream-elapsed" id="elapsed">00:00:00</div>
+      </div>
+      <div class="reactions-bar">
+        <div class="reaction-btn" onclick="sendReaction('🔥')">🔥</div>
+        <div class="reaction-btn" onclick="sendReaction('💰')">💰</div>
+        <div class="reaction-btn" onclick="sendReaction('👏')">👏</div>
+        <div class="reaction-btn" onclick="sendReaction('📝')">📝</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="live-chat">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <h3>Live Chat</h3>
+        <span class="chat-count" id="chatCount">0 chatting</span>
+      </div>
+      <span class="chat-speed" id="chatSpeed">0 msg/s</span>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Send a message..." onkeydown="if(event.key==='Enter')sendUserMsg()"/>
+      <button onclick="sendUserMsg()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== CONFIG ==========
+const SIMULATED_VIEWERS = 700000;
+let trueViewers = 1; // just us
+let displayViewers = 0;
+let streamStarted = false;
+let streamStart = null;
+let chatInterval = null;
+let msgCount = 0;
+let msgPerSecond = 0;
+let lastMsgCountCheck = 0;
+let lastMsgCountTime = Date.now();
+
+// ========== VIEWER COUNT ==========
+function animateViewerCount() {
+  const target = SIMULATED_VIEWERS + trueViewers;
+  const jitter = Math.floor((Math.random() - 0.5) * 2000);
+  const finalTarget = target + jitter;
+
+  if (displayViewers === 0) {
+    // Initial ramp-up over 8 seconds
+    const steps = 120;
+    let step = 0;
+    const ramp = setInterval(() => {
+      step++;
+      const progress = step / steps;
+      const eased = 1 - Math.pow(1 - progress, 3);
+      displayViewers = Math.floor(finalTarget * eased);
+      updateViewerDisplay();
+      if (step >= steps) {
+        clearInterval(ramp);
+        displayViewers = finalTarget;
+        updateViewerDisplay();
+        // Start natural fluctuation
+        startViewerFluctuation();
+      }
+    }, 67);
+  }
+}
+
+function startViewerFluctuation() {
+  setInterval(() => {
+    const jitter = Math.floor((Math.random() - 0.5) * 4000);
+    const drift = Math.floor(Math.sin(Date.now() / 30000) * 8000);
+    displayViewers = SIMULATED_VIEWERS + trueViewers + jitter + drift;
+    updateViewerDisplay();
+  }, 2000);
+}
+
+function updateViewerDisplay() {
+  const el = document.getElementById('viewerCount');
+  el.textContent = displayViewers.toLocaleString();
+}
+
+// ========== ELAPSED TIME ==========
+function updateElapsed() {
+  if (!streamStart) return;
+  const diff = Math.floor((Date.now() - streamStart) / 1000);
+  const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+  const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+  const s = String(diff % 60).padStart(2, '0');
+  document.getElementById('elapsed').textContent = `${h}:${m}:${s}`;
+}
+
+// ========== CHAT SIMULATION ==========
+const FIRST_NAMES = [
+  'Alex','Jordan','Sam','Morgan','Taylor','Casey','Riley','Quinn','Avery','Cameron',
+  'Blake','Drew','Jamie','Jesse','Peyton','Reese','Sage','Skyler','Dakota','Kai',
+  'Maria','David','Lisa','Mike','Sarah','Tom','Jenny','Chris','Amy','Dan',
+  'Nicole','Ryan','Emily','Jake','Megan','Kevin','Rachel','Brian','Hannah','Tyler',
+  'Omar','Priya','Yuki','Chen','Fatima','Diego','Anya','Raj','Leila','Javier',
+  'DeShawn','Kenji','Simone','Mateo','Isla','Nadia','Oleg','Amara','Lucas','Sofia'
+];
+
+const CHAT_MESSAGES = [
+  // Reactions
+  "🔥🔥🔥", "💰💰💰", "👏👏👏", "📝 taking notes!!", "this is GOLD",
+  "🤯🤯", "W stream", "LFG!!", "💎💎", "sheesh", "no way", "wait WHAT",
+  "mind blown rn", "bro what", "huge W", "facts", "📝📝📝", "yooo",
+
+  // Finance reactions
+  "i had no idea about this deduction", "my CPA never told me this",
+  "just checked my return... im missing $2k", "bruh i've been overpaying for YEARS",
+  "this should be taught in school fr", "saving this for tax season",
+  "just screenshot everything lol", "ok this actually makes sense now",
+  "wait so I can still amend??", "calling my CPA tomorrow morning",
+  "HSA gang rise up 🙌", "Schedule 1 line 11 everyone write that down",
+  "just texted my wife about the HSA", "my 401k fees are 1.2% wtf",
+  "switching to index funds tomorrow", "Roth IRA is the way",
+
+  // Questions
+  "does this work for self-employed?", "what about married filing separately?",
+  "how far back can you amend?", "is there an income limit?",
+  "what if I already used TurboTax?", "can someone explain the HSA part again?",
+  "does this apply to 1099 workers?", "what about state taxes?",
+  "when's the deadline for amending?", "does this work in all 50 states?",
+
+  // Community vibes
+  "first time here, this is amazing", "been watching since ep 1",
+  "subscribed!", "shared this with my whole office", "my parents need to see this",
+  "josh is the goat fr", "better than my college finance class",
+  "finally someone who explains this clearly", "the fine print matters!!",
+  "i tell everyone about this channel", "watching from 🇨🇦",
+  "watching from 🇬🇧", "greetings from Texas!", "NYC in the house",
+  "LA checking in", "Florida gang", "Chicago here!", "ATL represent",
+
+  // Short reactions
+  "W", "L", "real", "based", "cap", "no cap", "fr fr", "ong",
+  "say less", "bet", "this", "^^^^^", "💯", "🙏", "❤️",
+  "clip that", "someone clip this", "rewind pls",
+
+  // Longer engagement
+  "been doing my taxes wrong for 10 years apparently",
+  "just saved this to watch again later with my partner",
+  "the 401k fee section from last week saved me $400/year",
+  "I actually amended my 2024 return after episode 53 and got $1,200 back",
+  "this channel has literally paid for itself 100x over",
+  "tell us about real estate closing costs next!!",
+  "can you do one on student loan refinancing?",
+  "petition for a healthcare episode 🙏",
+];
+
+const SUPER_MESSAGES = [
+  { amount: '$5', text: 'Josh you changed my life with the HSA episode' },
+  { amount: '$10', text: 'got $3,200 back on my amended return. THANK YOU' },
+  { amount: '$2', text: 'first superchat ever, you earned it' },
+  { amount: '$20', text: 'sharing this with my entire team at work' },
+  { amount: '$5', text: 'the 401k fee audit saved me $800/yr no joke' },
+  { amount: '$50', text: 'because of you I found a fee-only advisor and built a real plan. life changing.' },
+  { amount: '$10', text: 'my tax refund was $2,400 bigger this year 🔥' },
+  { amount: '$5', text: 'the closing cost episode saved us $4,100 on our house' },
+  { amount: '$2', text: 'watching from London, wish we had this in the UK' },
+  { amount: '$25', text: 'just hit 6 months of community membership. best $54 i ever spent' },
+];
+
+function getRandomName() {
+  const name = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
+  const suffix = Math.random() > 0.6 ? Math.floor(Math.random() * 999) : '';
+  return name + suffix;
+}
+
+function getRandomColorClass() {
+  return 'nc-' + (Math.floor(Math.random() * 10) + 1);
+}
+
+function addChatMessage(name, text, isSuper, amount) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg' + (isSuper ? ' super' : '');
+
+  const colorClass = getRandomColorClass();
+
+  if (isSuper) {
+    div.innerHTML = `<span class="amount">${amount}</span><span class="name ${colorClass}">${name}</span><span class="text">${text}</span>`;
+  } else {
+    div.innerHTML = `<span class="name ${colorClass}">${name}</span><span class="text">${text}</span>`;
+  }
+
+  container.appendChild(div);
+  msgCount++;
+
+  // Keep max 200 messages in DOM
+  while (container.children.length > 200) {
+    container.removeChild(container.firstChild);
+  }
+
+  // Auto-scroll
+  container.scrollTop = container.scrollHeight;
+}
+
+function generateChatMessage() {
+  const isSuper = Math.random() < 0.008; // ~0.8% chance
+  if (isSuper) {
+    const sc = SUPER_MESSAGES[Math.floor(Math.random() * SUPER_MESSAGES.length)];
+    addChatMessage(getRandomName(), sc.text, true, sc.amount);
+  } else {
+    const text = CHAT_MESSAGES[Math.floor(Math.random() * CHAT_MESSAGES.length)];
+    addChatMessage(getRandomName(), text, false);
+  }
+}
+
+// For 700k viewers, chat should be VERY fast
+// Typical large stream: ~200-500 messages per second visible
+// We'll batch them for performance
+function startChat() {
+  const msgsPerSecond = 150; // fast but readable
+  const batchSize = 5;
+  const interval = (1000 / msgsPerSecond) * batchSize;
+
+  chatInterval = setInterval(() => {
+    for (let i = 0; i < batchSize; i++) {
+      generateChatMessage();
+    }
+  }, interval);
+
+  // Update msg/s counter
+  setInterval(() => {
+    const now = Date.now();
+    const elapsed = (now - lastMsgCountTime) / 1000;
+    if (elapsed >= 1) {
+      msgPerSecond = Math.round((msgCount - lastMsgCountCheck) / elapsed);
+      lastMsgCountCheck = msgCount;
+      lastMsgCountTime = now;
+      document.getElementById('chatSpeed').textContent = `~${msgPerSecond} msg/s`;
+
+      // Chatting count is ~2-5% of viewers
+      const chatting = Math.floor(displayViewers * (0.02 + Math.random() * 0.03));
+      document.getElementById('chatCount').textContent = chatting.toLocaleString() + ' chatting';
+    }
+  }, 1000);
+}
+
+// ========== REACTIONS ==========
+function sendReaction(emoji) {
+  const container = document.getElementById('videoContainer');
+  const el = document.createElement('div');
+  el.className = 'floating-emoji';
+  el.textContent = emoji;
+  el.style.right = (60 + Math.random() * 40) + 'px';
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+
+  // Also add to chat
+  addChatMessage(getRandomName(), emoji, false);
+}
+
+// Auto floating reactions
+function startAutoReactions() {
+  const emojis = ['🔥','💰','👏','📝','💎','🙌','❤️','💯'];
+  setInterval(() => {
+    if (Math.random() < 0.4) {
+      const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+      const container = document.getElementById('videoContainer');
+      const el = document.createElement('div');
+      el.className = 'floating-emoji';
+      el.textContent = emoji;
+      el.style.right = (40 + Math.random() * 80) + 'px';
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+  }, 300);
+}
+
+// ========== USER INPUT ==========
+function sendUserMsg() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addChatMessage('You', text, false);
+  input.value = '';
+}
+
+// ========== START STREAM ==========
+function startStream() {
+  if (streamStarted) return;
+  streamStarted = true;
+  streamStart = Date.now();
+
+  document.getElementById('videoOverlay').style.display = 'none';
+
+  animateViewerCount();
+  startChat();
+  startAutoReactions();
+
+  setInterval(updateElapsed, 1000);
+
+  // Pre-populate a few welcome messages
+  addChatMessage('Fine Print Finance', 'Welcome to the live stream! 🎉 The $1,847 Tax Workshop starts now.', false);
+  addChatMessage('Moderator', '📌 Rules: Be respectful. No financial advice in chat. Questions welcome!', false);
+}
+
+// ========== INIT ==========
+document.getElementById('viewerCount').textContent = '0';
+</script>
+</body>
+</html>
