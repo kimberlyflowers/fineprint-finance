@@ -117,6 +117,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .live-grid {
   display: grid; grid-template-columns: 1fr 360px; gap: 20px;
+  align-items: start;
 }
 
 /* ============= VIDEO ============= */
@@ -197,7 +198,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .chat-panel {
   border-radius: 14px; overflow: hidden; background: var(--off-white);
   border: 1px solid var(--line); display: flex; flex-direction: column;
-  min-height: 480px;
+  max-height: 600px;
 }
 .chat-header {
   padding: 14px 18px;
@@ -918,6 +919,20 @@ function startStream() {
   addChatMessage('Fine Print Finance', 'Welcome to the live stream! The $1,847 Tax Workshop starts now.', false);
   addChatMessage('Moderator', 'Rules: Be respectful. No financial advice in chat. Questions welcome!', false);
 }
+
+// ========== SYNC CHAT HEIGHT TO VIDEO ==========
+function syncChatHeight() {
+  const video = document.querySelector('.video-wrap');
+  const chat = document.querySelector('.chat-panel');
+  if (video && chat && window.innerWidth > 980) {
+    chat.style.maxHeight = video.offsetHeight + 'px';
+  } else if (chat) {
+    chat.style.maxHeight = '';
+  }
+}
+window.addEventListener('resize', syncChatHeight);
+window.addEventListener('load', syncChatHeight);
+setTimeout(syncChatHeight, 100);
 
 // ========== INIT ==========
 document.getElementById('viewerCount').textContent = '0';
